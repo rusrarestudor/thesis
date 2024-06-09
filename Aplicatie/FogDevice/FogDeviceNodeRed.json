@@ -1,0 +1,276 @@
+[
+    {
+        "id": "89a6bcadb2c87c79",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "24cf57458d446290",
+        "type": "mqtt in",
+        "z": "89a6bcadb2c87c79",
+        "name": "",
+        "topic": "gym/sensors",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "64d6929f76410fba",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 230,
+        "y": 180,
+        "wires": [
+            [
+                "33615c0486b59f29"
+            ]
+        ]
+    },
+    {
+        "id": "8ba20ebf8739cef9",
+        "type": "mqtt out",
+        "z": "89a6bcadb2c87c79",
+        "name": "",
+        "topic": "gym/processed",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "64d6929f76410fba",
+        "x": 920,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "33615c0486b59f29",
+        "type": "debug",
+        "z": "89a6bcadb2c87c79",
+        "name": "MQQT messages gym",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 320,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "bebf4f89ddb8414b",
+        "type": "function",
+        "z": "89a6bcadb2c87c79",
+        "name": "read_data_from_gym",
+        "func": "var data = JSON.parse(msg.payload);\nvar temperature = data.temperature;\nvar humidity = data.humidity;\nvar button = data.button;\n\n// Example of processing data (e.g., calculating average, thresholds, etc.)\nvar processedData = {\n    temperature: temperature,\n    humidity: humidity,\n    button: button,\n    status: (button ? \"Button pressed\" : \"Button not pressed\")\n};\n\nmsg.payload = JSON.stringify(processedData);\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 560,
+        "y": 180,
+        "wires": [
+            [
+                "8ba20ebf8739cef9"
+            ]
+        ]
+    },
+    {
+        "id": "6e95d9ad8553e26a",
+        "type": "mqtt in",
+        "z": "89a6bcadb2c87c79",
+        "name": "",
+        "topic": "phone/sensors",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "64d6929f76410fba",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 220,
+        "y": 480,
+        "wires": [
+            [
+                "544084ea3f83b7d0",
+                "8c7135b2ba3c9f12"
+            ]
+        ]
+    },
+    {
+        "id": "3f7676d42e306f40",
+        "type": "mqtt out",
+        "z": "89a6bcadb2c87c79",
+        "name": "",
+        "topic": "phone/sensors",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "64d6929f76410fba",
+        "x": 940,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "544084ea3f83b7d0",
+        "type": "debug",
+        "z": "89a6bcadb2c87c79",
+        "name": "MQQT messages phone",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 430,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "8c7135b2ba3c9f12",
+        "type": "function",
+        "z": "89a6bcadb2c87c79",
+        "name": "read_data_from_phone",
+        "func": "var sensorData = msg.payload;\n\n// Assuming sensorData contains gyroscope and accelerometer data\nvar gyroscope = sensorData.gyroscope;\nvar accelerometer = sensorData.accelerometer;\n\n// Example processing: Calculate the magnitude of the acceleration\nvar accelerationMagnitude = Math.sqrt(\n    Math.pow(accelerometer.x, 2) +\n    Math.pow(accelerometer.y, 2) +\n    Math.pow(accelerometer.z, 2)\n);\n\n// Example processing: Calculate the magnitude of the gyroscope\nvar gyroscopeMagnitude = Math.sqrt(\n    Math.pow(gyroscope.x, 2) +\n    Math.pow(gyroscope.y, 2) +\n    Math.pow(gyroscope.z, 2)\n);\n\n// Combine processed data\nvar processedData = {\n    accelerationMagnitude: accelerationMagnitude,\n    gyroscopeMagnitude: gyroscopeMagnitude,\n    rawData: sensorData\n};\n\nmsg.payload = processedData;\nreturn msg;\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 480,
+        "wires": [
+            [
+                "3f7676d42e306f40"
+            ]
+        ]
+    },
+    {
+        "id": "4e3a98b9e2af5897",
+        "type": "http in",
+        "z": "89a6bcadb2c87c79",
+        "name": "POST phone",
+        "url": "/phone/status",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 210,
+        "y": 660,
+        "wires": [
+            [
+                "1b081e08d7295fd0"
+            ]
+        ]
+    },
+    {
+        "id": "1b081e08d7295fd0",
+        "type": "json",
+        "z": "89a6bcadb2c87c79",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 430,
+        "y": 660,
+        "wires": [
+            [
+                "ad3fb3e69d5d8fe8",
+                "434e17af1ad643c9"
+            ]
+        ]
+    },
+    {
+        "id": "ad3fb3e69d5d8fe8",
+        "type": "debug",
+        "z": "89a6bcadb2c87c79",
+        "name": "JSON data phone",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 530,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "434e17af1ad643c9",
+        "type": "function",
+        "z": "89a6bcadb2c87c79",
+        "name": "process_phone_requests",
+        "func": "// Simulated data - in a real setup, you would query your database or state\nvar gymMachineStatus = {\n    machine1: {\n        temperature: 22,\n        humidity: 50,\n        bluetooth: true,\n        workoutStatus: \"active\"\n    },\n    machine2: {\n        temperature: 24,\n        humidity: 55,\n        bluetooth: false,\n        workoutStatus: \"inactive\"\n    }\n};\n\nmsg.payload = gymMachineStatus;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 660,
+        "wires": [
+            [
+                "2dbc1ebc4aeb68f9"
+            ]
+        ]
+    },
+    {
+        "id": "2dbc1ebc4aeb68f9",
+        "type": "http response",
+        "z": "89a6bcadb2c87c79",
+        "name": "Response phone",
+        "statusCode": "200",
+        "headers": {},
+        "x": 1090,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "64d6929f76410fba",
+        "type": "mqtt-broker",
+        "name": "localhost",
+        "broker": "localhost",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]
