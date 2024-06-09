@@ -1,0 +1,33 @@
+# Android
+*.apk
+*.ap_
+*.dex
+*.class
+
+# Xamarin (C# for Android)
+bin/
+obj/
+.vs/
+*.userprefs
+*.user
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# Node-RED
+node_modules/
+.config.json
+.sessions.json
+
+# Arduino
+*.cpp.bin
+*.cpp.el
+*.cpp.hex
+*.cpp.map
+*.cpp.obj
+*.elf
+*.hex
+*.bin
+.build/
+.pioenvs/
